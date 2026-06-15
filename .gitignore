@@ -1,0 +1,24 @@
+# Sensitive infrastructure files (contain live credentials)
+docs/claude/current_docker-compose.yml
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
