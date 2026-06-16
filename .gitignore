@@ -15,6 +15,9 @@ build/
 .env.*
 !.env.example
 
+# Local dev database
+*.db
+
 # IDE
 .vscode/
 .idea/

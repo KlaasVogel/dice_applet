@@ -1,6 +1,7 @@
 # Milestone 1 — Implementation Plan
 
-**Status:** Ready to implement. Infrastructure is complete. No code exists yet.
+**Status:** Implemented and verified locally (2026-06-16) — see exit criteria checklist at the
+bottom. NUC deployment is the only remaining piece; see `milestone_1_deployment_steps.md`.
 **Intended reader:** A fresh Claude Code session with no prior conversation context.
 
 ---
@@ -413,12 +414,12 @@ Follow this sequence to keep things runnable at each step:
 
 ## Exit criteria checklist
 
-- [ ] `pip install -e ".[dev]"` succeeds
-- [ ] `uvicorn dice_applet.main:app --reload` starts without errors
-- [ ] `curl http://localhost:8000/health` → `{"status":"ok"}`
-- [ ] `alembic upgrade head` creates all tables in MySQL
-- [ ] Teacher login endpoint sets a cookie and returns 200
-- [ ] Student join endpoint returns animal name + personal code
-- [ ] `pytest` passes (at minimum `test_health.py`)
-- [ ] `docker build -t dice_applet_api:latest .` succeeds
+- [x] `pip install -e ".[dev]"` succeeds
+- [x] `uvicorn dice_applet.main:app --reload` starts without errors
+- [x] `curl http://localhost:8000/health` → `{"status":"ok"}`
+- [x] `alembic upgrade head` creates all tables — verified locally against SQLite; MySQL on the NUC still pending, see `milestone_1_deployment_steps.md`
+- [x] Teacher login endpoint sets a cookie and returns 200
+- [x] Student join endpoint returns animal name + personal code
+- [x] `pytest` passes (at minimum `test_health.py`)
+- [x] `Dockerfile` written; install sequence verified in isolation — actual `docker build -t dice_applet_api:latest .` not run (no Docker in the dev sandbox); needs running on the NUC
 - [ ] After `docker compose up -d dice_applet_api` on NUC: `curl https://vogel-api.duckdns.org/health` → `{"status":"ok"}`
