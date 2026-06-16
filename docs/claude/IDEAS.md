@@ -79,7 +79,7 @@ Graphs:
 		(in the last 2 activities show an extra horizontal line and coords for the second 
 
 ##infrastructure
-website url is going to be: www.klaasvogel.nl/grundel/natuurkunde/dobbelstenen
+website url is going to be: www.klaasvogel.nl/natuurkunde/dobbelstenen
 not sure how to setup live testing: maybe live sync using wsftp? or directly in wsl?
 data can be stored in (external -> at home) mysql database.
 I think I want to use p5.js 
