@@ -123,7 +123,7 @@ Goal: App runs on the production server at the correct URL.
 
 - [ ] Decide live testing strategy (SFTP sync vs. direct WSL mount vs. Docker)
 - [ ] Production `.env` on server with real MySQL credentials
-- [ ] Nginx reverse-proxy config for `klaasvogel.nl/grundel/natuurkunde/dobbelstenen`
+- [ ] Nginx reverse-proxy config for `https://www.klaasvogel.nl/natuurkunde/dobbelstenen`
 - [ ] `systemd --user` service file for the FastAPI/Uvicorn process
 - [ ] Final QA pass: full student + teacher flow in production environment
 

@@ -132,3 +132,20 @@ curl -i -X POST https://vogel-api.duckdns.org/teacher/login \
 - [x] `docker compose up -d dice_applet_api` running, logs show Uvicorn started
 - [x] `alembic upgrade head` (via `docker exec`) created all 4 tables
 - [x] `curl https://vogel-api.duckdns.org/health` → `{"status":"ok"}` from outside the home network
+
+---
+
+## Operational notes
+
+### Updating `.env` on the NUC
+
+The container does **not** auto-reload when `.env` changes. After editing `/srv/dice_applet/.env`
+(e.g. regenerating `TEACHER_PASSWORD_HASH`), restart the container to pick up the new values:
+
+```bash
+ssh nuc
+docker restart dice_applet_api
+```
+
+> Teacher login was found not working after the hash was regenerated (2026-06-23) — likely because
+> the container was not restarted after the `.env` update.

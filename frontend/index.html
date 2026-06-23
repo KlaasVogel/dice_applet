@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="page_title">Dobbelstenen — Radioactief verval</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <div class="lang-toggle">
+      <button id="btn-nl" class="flag-btn active" aria-label="Nederlands">🇳🇱</button>
+      <button id="btn-en" class="flag-btn" aria-label="English">🇬🇧</button>
+    </div>
+    <h1 data-i18n="app_title">Dobbelstenen</h1>
+    <button id="btn-teacher" class="icon-btn" aria-label="Docent inloggen">⚙</button>
+  </header>
+
+  <main>
+    <!-- View: student landing -->
+    <section id="view-landing" class="view">
+      <div class="card">
+        <h2 data-i18n="landing_new">Meedoen aan een klas</h2>
+        <label for="input-classroom-code" data-i18n="label_classroom_code">Klassikale code</label>
+        <input id="input-classroom-code" type="text" maxlength="5" autocomplete="off" autocapitalize="characters">
+        <button id="btn-join-classroom" class="btn-primary" data-i18n="btn_join">Meedoen</button>
+      </div>
+
+      <div class="divider"><span data-i18n="or">of</span></div>
+
+      <div class="card">
+        <h2 data-i18n="landing_return">Ik heb al een code</h2>
+        <label for="input-personal-code" data-i18n="label_personal_code">Persoonlijke code</label>
+        <input id="input-personal-code" type="text" maxlength="12" autocomplete="off">
+        <button id="btn-join-personal" class="btn-secondary" data-i18n="btn_continue">Verdergaan</button>
+      </div>
+    </section>
+
+    <!-- View: student home (stub for M2) -->
+    <section id="view-student-home" class="view hidden">
+      <div class="card">
+        <p class="stub-notice" data-i18n="student_home_stub">Welkom! Activiteiten volgen in de volgende fase.</p>
+        <button id="btn-leave" class="btn-secondary" data-i18n="btn_leave">Terug</button>
+      </div>
+    </section>
+
+    <!-- View: teacher dashboard (stub for M2) -->
+    <section id="view-teacher" class="view hidden">
+      <div class="card">
+        <h2 data-i18n="teacher_title">Docentendashboard</h2>
+        <p class="stub-notice" data-i18n="teacher_stub">Klasbeheer volgt in een latere fase.</p>
+        <button id="btn-logout" class="btn-secondary" data-i18n="btn_logout">Uitloggen</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Teacher login modal -->
+  <div id="modal-teacher" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-content">
+      <h2 id="modal-title" data-i18n="teacher_login_title">Docent inloggen</h2>
+      <label for="input-teacher-password" data-i18n="label_password">Wachtwoord</label>
+      <input id="input-teacher-password" type="password" autocomplete="current-password">
+      <p id="teacher-error" class="error hidden" data-i18n="teacher_login_error">Ongeldig wachtwoord</p>
+      <div class="modal-actions">
+        <button id="btn-teacher-cancel" class="btn-secondary" data-i18n="btn_cancel">Annuleren</button>
+        <button id="btn-teacher-submit" class="btn-primary" data-i18n="btn_login">Inloggen</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/router.js"></script>
+  <script src="js/student.js"></script>
+  <script src="js/teacher.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
