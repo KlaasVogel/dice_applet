@@ -2,6 +2,10 @@
 
 **Status:** Ready to action — all infrastructure details are known.
 
+> For the concrete, current-state checklist of what's left to deploy Milestone 1 (now that the
+> code exists), see `milestone_1_deployment_steps.md`. This file remains the general background
+> on how the NUC/Docker/NPM architecture is set up.
+
 > **Security warning:** `docs/claude/current_docker-compose.yml` contains live credentials
 > (DuckDNS token, NordVPN token, FlexGet password). Add it to `.gitignore` or replace
 > the values with placeholders before pushing to GitHub.

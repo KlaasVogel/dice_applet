@@ -125,6 +125,18 @@ dice_applet/
 
 ---
 
+## NUC — dice_applet
+- SSH user: claude (key-based only, no docker/sudo access)
+- SSH alias: `nuc-claude`
+- Shared group `coding` (klaas + claude) owns /srv/dice_applet
+  - setgid bit enabled — new files inherit group `coding`
+  - `safe.directory` already configured for `/srv/dice_applet` in claude's git config
+- Can perform: git pull, git status, git log within /srv/dice_applet
+- Cannot run docker commands — instead, output the exact commands 
+  for the developer to run manually
+- Always ask permission before connecting or pulling
+
+
 ## Development Notes
 
 - Run backend locally with `uvicorn src.dice_applet.main:app --reload`

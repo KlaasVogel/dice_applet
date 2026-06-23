@@ -1,6 +1,6 @@
 # Roadmap — Dice Applet
 
-Last updated: 2026-06-15
+Last updated: 2026-06-16
 Status key: ⬜ not started · 🔵 in progress · ✅ done
 
 ---
@@ -16,23 +16,25 @@ Status key: ⬜ not started · 🔵 in progress · ✅ done
 
 ---
 
-## Milestone 1 — Database Schema & Backend Skeleton ⬜
+## Milestone 1 — Database Schema & Backend Skeleton 🔵
 
 **Detailed plan:** `docs/claude/milestone_1_plan.md` — fully self-contained, pick up from there.
+**Deployment checklist:** `docs/claude/milestone_1_deployment_steps.md` — concrete NUC steps, pending review.
 
 Goal: All data models exist and the API surface is stubbed out.
 
-- [ ] `pyproject.toml` + venv
-- [ ] `src/dice_applet/` package: `config.py`, `main.py`, `db/`, `routers/`, `schemas/`, `services/`
-- [ ] SQLAlchemy models: `Classroom`, `Student`, `StudentDataset`, `Measurement`
-- [ ] Alembic migrations (`alembic upgrade head` creates all tables)
-- [ ] Health endpoint: `GET /health`
-- [ ] Teacher auth: `POST /teacher/login` → session cookie; `GET /teacher/classrooms`
-- [ ] Student join: `POST /student/join` → animal name + personal code
-- [ ] `Dockerfile` builds successfully
-- [ ] `.env.example`
+- [x] `pyproject.toml` + venv
+- [x] `src/dice_applet/` package: `config.py`, `main.py`, `db/`, `routers/`, `schemas/`, `services/`
+- [x] SQLAlchemy models: `Classroom`, `Student`, `StudentDataset`, `Measurement`
+- [x] Alembic migrations (`alembic upgrade head` creates all tables — verified locally against SQLite)
+- [x] Health endpoint: `GET /health`
+- [x] Teacher auth: `POST /teacher/login` → session cookie; `GET /teacher/classrooms`
+- [x] Student join: `POST /student/join` → animal name + personal code
+- [x] `Dockerfile` written (build verified via isolated pip-install simulation; not yet built with real `docker build`, no Docker available in dev sandbox)
+- [x] `.env.example`
+- [ ] Deployed to NUC and reachable at `vogel-api.duckdns.org` — see `milestone_1_deployment_steps.md`
 
-**Exit criteria:** See `milestone_1_plan.md` checklist — ends with `curl https://vogel-api.duckdns.org/health` returning `{"status":"ok"}`.
+**Exit criteria:** See `milestone_1_plan.md` checklist — ends with `curl https://vogel-api.duckdns.org/health` returning `{"status":"ok"}`. Code-level criteria are done and verified locally; the NUC deployment criteria are pending.
 
 ---
 
