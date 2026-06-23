@@ -19,19 +19,34 @@ decide what you want to do yourself vs. delegate.
 - [x] NPM proxy host for `vogel-api.duckdns.org` → `dice_applet_api:8000` configured, Let's Encrypt cert issued
 - [x] `dice_applet_api` service block already added to the NUC's `docker-compose.yml`
 - [x] `curl https://vogel-api.duckdns.org/health` currently returns `502` (correct — container doesn't exist yet)
+- [x] Repo cloned to `/srv/dice_applet` on the NUC (on `main`, connected to GitHub)
+- [x] `claude` SSH user created; member of `coding` group; `safe.directory` configured for `/srv/dice_applet`
 
 ## Steps to do
 
-### 1. Pull the code onto the NUC
+### 1. Pull the latest code onto the NUC
+
+The repo lives at `/srv/dice_applet`. The `claude` user (SSH alias `nuc-claude`) handles pulls;
+Docker commands must be run by `klaas` since `claude` has no Docker access.
 
 ```bash
-ssh nuc
-# first time only:
-git clone https://github.com/KlaasVogel/dice_applet.git ~/docker/dice_applet
-cd ~/docker/dice_applet
+# Pull latest (run as claude):
+ssh nuc-claude "cd /srv/dice_applet && git pull"
 ```
 
-If `~/docker/dice_applet` already exists from an earlier partial attempt, `git pull` instead.
+Before pulling, check for the unstaged local changes that exist from the initial setup:
+
+```bash
+ssh nuc-claude "cd /srv/dice_applet && git status"
+```
+
+If there are local modifications, `klaas` should discard or commit them first:
+
+```bash
+ssh nuc  # as klaas
+cd /srv/dice_applet
+git restore .   # discard local modifications if they are not intentional
+```
 
 ### 2. Create the MySQL database and user
 
@@ -48,12 +63,13 @@ Skip if this was already done in an earlier session — check with `SHOW DATABAS
 
 ### 3. Create the production `.env` file
 
-Create `~/docker/dice_applet/.env` (never committed — already gitignored). Use `.env.example` in
+Create `/srv/dice_applet/.env` (never committed — already gitignored). Use `.env.example` in
 the repo as the template, but **generate fresh values** — do not reuse anything from a local dev
 `.env`:
 
 ```bash
-cd ~/docker/dice_applet
+ssh nuc  # as klaas
+cd /srv/dice_applet
 python3 -c "import secrets; print('SECRET_KEY=' + secrets.token_hex(32))"
 python3 -c "import bcrypt; print('TEACHER_PASSWORD_HASH=' + bcrypt.hashpw(b'REPLACE_WITH_REAL_PASSWORD', bcrypt.gensalt()).decode())"
 ```
@@ -73,14 +89,18 @@ session used SQLite as a stand-in — that must **not** be carried over to the N
 
 ### 4. Build the image
 
+Run as `klaas` (Docker access required):
+
 ```bash
-cd ~/docker/dice_applet
+ssh nuc
+cd /srv/dice_applet
 docker build -t dice_applet_api:latest .
 ```
 
 ### 5. Verify the `docker-compose.yml` service block
 
-Confirm the existing block (added in a prior session) matches:
+Confirm the existing block (added in a prior session) matches, with `env_file` pointing to the
+new location:
 
 ```yaml
   dice_applet_api:
@@ -90,16 +110,17 @@ Confirm the existing block (added in a prior session) matches:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     env_file:
-      - ./dice_applet/.env
+      - /srv/dice_applet/.env
     networks:
       - vpn_network
 ```
 
-Adjust the `env_file` path if the repo isn't checked out exactly at `~/docker/dice_applet`.
-
 ### 6. Start the container
 
+Run as `klaas` from wherever the main `docker-compose.yml` lives:
+
 ```bash
+ssh nuc
 docker compose up -d dice_applet_api
 docker logs dice_applet_api
 # expect: "Uvicorn running on http://0.0.0.0:8000"
