@@ -139,13 +139,46 @@ curl -i -X POST https://vogel-api.duckdns.org/teacher/login \
 
 ### Updating `.env` on the NUC
 
-The container does **not** auto-reload when `.env` changes. After editing `/srv/dice_applet/.env`
-(e.g. regenerating `TEACHER_PASSWORD_HASH`), restart the container to pick up the new values:
+**`docker restart` does NOT re-read `env_file`** — it replays the environment baked in at
+container creation. To pick up `.env` changes you must recreate the container:
 
 ```bash
-ssh nuc
-docker restart dice_applet_api
+cd ~/infra
+docker compose up -d dice_applet_api
 ```
 
-> Teacher login was found not working after the hash was regenerated (2026-06-23) — likely because
-> the container was not restarted after the `.env` update.
+### Quoting values in `.env` — critical for bcrypt hashes
+
+Docker Compose interpolates `$` in `env_file` values. A bcrypt hash (`$2b$12$...`) contains
+`$` signs that get treated as variable references and silently stripped, corrupting the hash.
+
+**Always wrap the hash in single quotes:**
+
+```env
+TEACHER_PASSWORD_HASH='$2b$12$...'
+```
+
+Single quotes prevent expansion. Double quotes do not — they still allow `$` interpolation.
+
+### Teacher login — unresolved (2026-06-23)
+
+Status after troubleshooting session:
+- CORS is not the issue (request reaches the server)
+- Hash is now 60 chars and correctly loaded into the container (verified via `docker exec`)
+- Single-quoting the hash in `.env` fixed the Docker Compose interpolation issue
+- Login still returns 401 — hash does not match the password being typed
+
+**Most likely remaining cause:** the password used when generating the hash is not the same
+as what is being typed in the browser. To debug, test the hash directly inside the container:
+
+```bash
+docker exec -it dice_applet_api python3 -c "
+import bcrypt, os
+h = os.environ['TEACHER_PASSWORD_HASH']
+pw = input('Enter password to test: ').encode()
+print('Match:', bcrypt.checkpw(pw, h.encode()))
+"
+```
+
+If this returns `Match: False`, the password is wrong — regenerate the hash with a fresh known
+password. The slowness is normal: bcrypt cost factor 12 on the NUC's CPU takes a few seconds.
