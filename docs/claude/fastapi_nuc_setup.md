@@ -139,10 +139,57 @@ In the NPM admin panel at `http://NUC-local-IP:81`:
 5. **Forward Port:** `8000`
 6. **Block Common Exploits:** ✓
 7. **SSL tab → Request a new SSL certificate** (Let's Encrypt)
-   - Enable **Force SSL** and **HTTP/2 Support**
    - Email: klaasvogel@proton.me
+   - **Do NOT enable Force SSL** — stunnel terminates TLS before the request reaches NPM.
+     NPM receives plain HTTP from stunnel; Force SSL would cause a redirect loop for browser
+     CORS preflight requests.
+8. After the cert is issued, **remove it from the proxy host** (set Certificate → None on the SSL
+   tab). The cert stays on disk in `./nginx/letsencrypt/archive/npm-X/` for stunnel to mount.
 
-NPM stores the cert in `./nginx/letsencrypt` automatically.
+NPM stores certs in `./nginx/letsencrypt` automatically and handles renewal.
+
+---
+
+## Step 6b — Add the domain to stunnel's SNI config
+
+stunnel routes HTTPS by inspecting the SNI (domain name in the TLS ClientHello). Every domain
+that should reach NPM must be explicitly listed — unlisted domains silently fall through to the
+OpenVPN fallback and time out.
+
+**stunnel.conf is baked into the Docker image** (COPY in `Dockerfile.stunnel`), not mounted as a
+volume. Any change requires a full image rebuild — `docker restart` alone will NOT apply it.
+
+Find the new cert's archive folder (newest `npm-X` directory):
+
+```bash
+ls ~/infra/nginx/letsencrypt/archive/
+sudo openssl x509 -noout -subject -in ~/infra/nginx/letsencrypt/archive/npm-X/cert1.pem
+```
+
+Then make two changes and rebuild:
+
+**`docker-compose.yml`** — add a volume mount to the stunnel service:
+```yaml
+stunnel:
+  volumes:
+    # ... existing mounts ...
+    - ./nginx/letsencrypt/archive/npm-X:/etc/stunnel/certs/vogel-api:ro
+```
+
+**`stunnel.conf`** — add a new virtual service:
+```ini
+[nginx_api]
+sni = openvpn:vogel-api.duckdns.org
+connect = nginx:80
+cert = /etc/stunnel/certs/vogel-api/fullchain1.pem
+key = /etc/stunnel/certs/vogel-api/privkey1.pem
+```
+
+**Rebuild and restart:**
+```bash
+cd ~/infra
+docker compose build stunnel && docker compose up -d stunnel
+```
 
 ---
 

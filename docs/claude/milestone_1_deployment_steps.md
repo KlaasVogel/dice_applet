@@ -160,25 +160,20 @@ TEACHER_PASSWORD_HASH='$2b$12$...'
 
 Single quotes prevent expansion. Double quotes do not — they still allow `$` interpolation.
 
-### Teacher login — unresolved (2026-06-23)
+### Teacher login — resolved (2026-06-24)
 
-Status after troubleshooting session:
-- CORS is not the issue (request reaches the server)
-- Hash is now 60 chars and correctly loaded into the container (verified via `docker exec`)
-- Single-quoting the hash in `.env` fixed the Docker Compose interpolation issue
-- Login still returns 401 — hash does not match the password being typed
+Root cause was infrastructure, not the password or hash: `vogel-api.duckdns.org` was missing
+from stunnel's SNI routing table. HTTPS connections silently fell through to the OpenVPN
+fallback and timed out (~20–30 s), showing as "invalid password" in the UI because the JS
+catch block and the 401 path show the same error message.
 
-**Most likely remaining cause:** the password used when generating the hash is not the same
-as what is being typed in the browser. To debug, test the hash directly inside the container:
+**Fix applied (v0.2.2):**
+- Added `[nginx_api]` service to `stunnel.conf` with the correct cert (npm-4)
+- Changed `connect = nginx:80` (stunnel terminates TLS; NPM must receive plain HTTP)
+- Removed Force SSL from the NPM proxy host for `vogel-api.duckdns.org`
+- Rebuilt the stunnel Docker image (`docker compose build stunnel && docker compose up -d stunnel`)
 
-```bash
-docker exec -it dice_applet_api python3 -c "
-import bcrypt, os
-h = os.environ['TEACHER_PASSWORD_HASH']
-pw = input('Enter password to test: ').encode()
-print('Match:', bcrypt.checkpw(pw, h.encode()))
-"
-```
+Verified from inside the NUC: `POST http://localhost:80/teacher/login` → `{"ok":true}` in ~3 s.
+bcrypt cost 12 on NUC hardware takes ~3 s — expected and acceptable.
 
-If this returns `Match: False`, the password is wrong — regenerate the hash with a fresh known
-password. The slowness is normal: bcrypt cost factor 12 on the NUC's CPU takes a few seconds.
+See `fastapi_nuc_setup.md` Step 6b for the full stunnel SNI setup procedure.
