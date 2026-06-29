@@ -1,9 +1,67 @@
+import enum
 from datetime import datetime
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, SmallInteger, String, UniqueConstraint, func
+from sqlalchemy import Boolean, DateTime, Enum, ForeignKey, SmallInteger, String, UniqueConstraint, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base import Base
+
+
+class TeacherSchoolStatus(str, enum.Enum):
+    pending_admin = "pending_admin"
+    pending_school = "pending_school"
+    approved = "approved"
+    rejected = "rejected"
+
+
+class School(Base):
+    """A school that groups classrooms and teachers."""
+
+    __tablename__ = "schools"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(100), unique=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default="1")
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+
+    classrooms: Mapped[list["Classroom"]] = relationship(back_populates="school")
+    teacher_links: Mapped[list["TeacherSchool"]] = relationship(back_populates="school")
+
+
+class Teacher(Base):
+    """A registered teacher; active when they have at least one approved TeacherSchool row."""
+
+    __tablename__ = "teachers"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    email: Mapped[str] = mapped_column(String(254), unique=True)
+    password_hash: Mapped[str] = mapped_column(String(60))
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+
+    school_links: Mapped[list["TeacherSchool"]] = relationship(
+        back_populates="teacher",
+        foreign_keys="TeacherSchool.teacher_id",
+    )
+
+
+class TeacherSchool(Base):
+    """Junction table linking a teacher to a school, with an approval workflow."""
+
+    __tablename__ = "teacher_schools"
+    __table_args__ = (UniqueConstraint("teacher_id", "school_id", name="uq_teacher_school"),)
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    teacher_id: Mapped[int] = mapped_column(ForeignKey("teachers.id"))
+    school_id: Mapped[int] = mapped_column(ForeignKey("schools.id"))
+    status: Mapped[TeacherSchoolStatus] = mapped_column(
+        Enum(TeacherSchoolStatus, name="teacher_school_status"), nullable=False
+    )
+    resolved_by: Mapped[int | None] = mapped_column(ForeignKey("teachers.id"), nullable=True)
+    resolved_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    requested_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+
+    teacher: Mapped["Teacher"] = relationship(back_populates="school_links", foreign_keys=[teacher_id])
+    school: Mapped["School"] = relationship(back_populates="teacher_links")
 
 
 class Classroom(Base):
@@ -16,7 +74,9 @@ class Classroom(Base):
     join_code: Mapped[str] = mapped_column(String(5), unique=True, index=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, server_default="1")
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+    school_id: Mapped[int | None] = mapped_column(ForeignKey("schools.id"), nullable=True)
 
+    school: Mapped[School | None] = relationship(back_populates="classrooms")
     students: Mapped[list["Student"]] = relationship(back_populates="classroom")
 
 

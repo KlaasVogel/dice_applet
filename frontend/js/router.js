@@ -1,4 +1,4 @@
-const VIEWS = ["landing", "student-home", "teacher"];
+const VIEWS = ["landing", "student-home", "teacher", "register"];
 
 function showView(name) {
   VIEWS.forEach((v) => {
