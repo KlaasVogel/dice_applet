@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="page_title">Dobbelstenen — Radioactief verval</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <div class="lang-toggle">
+      <button id="btn-nl" class="flag-btn active" aria-label="Nederlands">🇳🇱</button>
+      <button id="btn-en" class="flag-btn" aria-label="English">🇬🇧</button>
+    </div>
+    <h1 data-i18n="app_title">Dobbelstenen</h1>
+    <button id="btn-teacher" class="icon-btn" aria-label="Docent inloggen">⚙</button>
+  </header>
+
+  <main>
+    <!-- View: student landing -->
+    <section id="view-landing" class="view">
+      <div class="card">
+        <h2 data-i18n="landing_new">Meedoen aan een klas</h2>
+        <label for="input-classroom-code" data-i18n="label_classroom_code">Klassikale code</label>
+        <input id="input-classroom-code" type="text" maxlength="5" autocomplete="off" autocapitalize="characters">
+        <button id="btn-join-classroom" class="btn-primary" data-i18n="btn_join">Meedoen</button>
+      </div>
+
+      <div class="divider"><span data-i18n="or">of</span></div>
+
+      <div class="card">
+        <h2 data-i18n="landing_return">Ik heb al een code</h2>
+        <label for="input-personal-code" data-i18n="label_personal_code">Persoonlijke code</label>
+        <input id="input-personal-code" type="text" maxlength="12" autocomplete="off">
+        <button id="btn-join-personal" class="btn-secondary" data-i18n="btn_continue">Verdergaan</button>
+      </div>
+    </section>
+
+    <!-- View: student home (stub for M3) -->
+    <section id="view-student-home" class="view hidden">
+      <div class="card">
+        <p class="stub-notice" data-i18n="student_home_stub">Welkom! Activiteiten volgen in de volgende fase.</p>
+        <button id="btn-leave" class="btn-secondary" data-i18n="btn_leave">Terug</button>
+      </div>
+    </section>
+
+    <!-- View: teacher dashboard (stub for M5) -->
+    <section id="view-teacher" class="view hidden">
+      <div class="card">
+        <h2 data-i18n="teacher_title">Docentendashboard</h2>
+        <p class="stub-notice" data-i18n="teacher_stub">Klasbeheer volgt in een latere fase.</p>
+        <button id="btn-logout" class="btn-secondary" data-i18n="btn_logout">Uitloggen</button>
+      </div>
+    </section>
+
+    <!-- View: registration form -->
+    <section id="view-register" class="view hidden">
+      <div class="card">
+        <h2 data-i18n="register_title">Account aanvragen</h2>
+
+        <label for="input-reg-email" data-i18n="label_email">E-mailadres</label>
+        <input id="input-reg-email" type="email" autocomplete="username" placeholder="naam@carmelhengelo.nl">
+
+        <label for="input-reg-password" data-i18n="label_password">Wachtwoord</label>
+        <input id="input-reg-password" type="password" autocomplete="new-password">
+
+        <fieldset class="school-choice">
+          <legend data-i18n="legend_school">School</legend>
+          <label class="radio-label">
+            <input type="radio" name="school-choice" id="radio-new-school" value="new" checked>
+            <span data-i18n="radio_new_school">Nieuwe school aanmaken</span>
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="school-choice" id="radio-existing-school" value="existing">
+            <span data-i18n="radio_existing_school">Aansluiten bij bestaande school</span>
+          </label>
+        </fieldset>
+
+        <div id="field-new-school">
+          <label for="input-school-name" data-i18n="label_school_name">Naam van de school</label>
+          <input id="input-school-name" type="text" maxlength="100">
+        </div>
+
+        <div id="field-existing-school" class="hidden">
+          <label for="select-school" data-i18n="label_select_school">Kies een school</label>
+          <select id="select-school"></select>
+        </div>
+
+        <p id="register-error" class="error hidden"></p>
+        <p id="register-success" class="success hidden" data-i18n="register_success">
+          Verzoek ingediend! Je ontvangt bericht als je account is goedgekeurd.
+        </p>
+
+        <div class="form-actions">
+          <button id="btn-reg-cancel" class="btn-secondary" data-i18n="btn_cancel">Annuleren</button>
+          <button id="btn-reg-submit" class="btn-primary" data-i18n="btn_submit">Versturen</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Teacher / Admin login modal -->
+  <div id="modal-teacher" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-content">
+      <h2 id="modal-title" data-i18n="modal_login_title">Inloggen</h2>
+
+      <div class="modal-tabs" role="tablist">
+        <button id="tab-btn-teacher" class="tab-btn active" role="tab" aria-selected="true" data-i18n="tab_teacher">Docent</button>
+        <button id="tab-btn-admin" class="tab-btn" role="tab" aria-selected="false" data-i18n="tab_admin">Admin</button>
+      </div>
+
+      <div id="tab-teacher-fields">
+        <label for="input-teacher-email" data-i18n="label_email">E-mailadres</label>
+        <input id="input-teacher-email" type="email" autocomplete="username" placeholder="naam@carmelhengelo.nl">
+      </div>
+
+      <label for="input-teacher-password" data-i18n="label_password">Wachtwoord</label>
+      <input id="input-teacher-password" type="password" autocomplete="current-password">
+
+      <p id="teacher-error" class="error hidden" data-i18n="teacher_login_error">Onjuiste gegevens</p>
+
+      <div class="modal-actions">
+        <button id="btn-teacher-cancel" class="btn-secondary" data-i18n="btn_cancel">Annuleren</button>
+        <button id="btn-teacher-submit" class="btn-primary" data-i18n="btn_login">Inloggen</button>
+      </div>
+
+      <div id="register-link" class="register-link">
+        <a href="#" id="btn-goto-register" data-i18n="link_register">Nog geen account? Verzoek indienen →</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/router.js"></script>
+  <script src="js/student.js"></script>
+  <script src="js/teacher.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

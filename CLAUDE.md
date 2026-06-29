@@ -4,7 +4,7 @@
 
 An educational web applet for simulating radioactive decay using dice, used in Dutch secondary school physics classes. Students perform physical dice rolls and record their measurements here; the app visualises the resulting decay curves.
 
-**Deployment URL:** `www.klaasvogel.nl/grundel/natuurkunde/dobbelstenen`
+**Deployment URL:** `https://www.klaasvogel.nl/natuurkunde/dobbelstenen`
 **Default language:** Dutch (toggle to English via flag icon)
 **Target users:** Teachers (manage classrooms) + Students (record measurements)
 
@@ -136,6 +136,22 @@ dice_applet/
   for the developer to run manually
 - Always ask permission before connecting or pulling
 
+## Web Server Access (klaasvogel.nl)
+- Connect via: `lftp klaasvogel`
+- Connects directly to `/httpdocs/natuurkunde/dobbelstenen`
+- FTP with SSL verification disabled (certificate mismatch on host)
+- **Always ask permission before connecting**
+- **Always ask permission before uploading or deleting files**
+- Once permission is granted it applies for the current session only
+- Never upload outside the designated directory
+- **CRITICAL:** Always use `put localfile -o subdir/filename` — plain `put` strips the
+  directory and silently drops the file in the wrong location (e.g. `put frontend/css/style.css`
+  lands at root as `style.css`, not `css/style.css`)
+
+## Version Control Conventions
+- Commit messages must start with the version number: `v0.3.0 description of change`
+- Version bumps: patch (x.x.N) for fixes/docs; minor (x.N.0) for completed milestones
+- Each milestone completion gets its own `docs/changelog/vX.Y.Z.md`
 
 ## Development Notes
 

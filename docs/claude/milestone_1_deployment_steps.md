@@ -132,3 +132,48 @@ curl -i -X POST https://vogel-api.duckdns.org/teacher/login \
 - [x] `docker compose up -d dice_applet_api` running, logs show Uvicorn started
 - [x] `alembic upgrade head` (via `docker exec`) created all 4 tables
 - [x] `curl https://vogel-api.duckdns.org/health` → `{"status":"ok"}` from outside the home network
+
+---
+
+## Operational notes
+
+### Updating `.env` on the NUC
+
+**`docker restart` does NOT re-read `env_file`** — it replays the environment baked in at
+container creation. To pick up `.env` changes you must recreate the container:
+
+```bash
+cd ~/infra
+docker compose up -d dice_applet_api
+```
+
+### Quoting values in `.env` — critical for bcrypt hashes
+
+Docker Compose interpolates `$` in `env_file` values. A bcrypt hash (`$2b$12$...`) contains
+`$` signs that get treated as variable references and silently stripped, corrupting the hash.
+
+**Always wrap the hash in single quotes:**
+
+```env
+TEACHER_PASSWORD_HASH='$2b$12$...'
+```
+
+Single quotes prevent expansion. Double quotes do not — they still allow `$` interpolation.
+
+### Teacher login — resolved (2026-06-24)
+
+Root cause was infrastructure, not the password or hash: `vogel-api.duckdns.org` was missing
+from stunnel's SNI routing table. HTTPS connections silently fell through to the OpenVPN
+fallback and timed out (~20–30 s), showing as "invalid password" in the UI because the JS
+catch block and the 401 path show the same error message.
+
+**Fix applied (v0.2.2):**
+- Added `[nginx_api]` service to `stunnel.conf` with the correct cert (npm-4)
+- Changed `connect = nginx:80` (stunnel terminates TLS; NPM must receive plain HTTP)
+- Removed Force SSL from the NPM proxy host for `vogel-api.duckdns.org`
+- Rebuilt the stunnel Docker image (`docker compose build stunnel && docker compose up -d stunnel`)
+
+Verified from inside the NUC: `POST http://localhost:80/teacher/login` → `{"ok":true}` in ~3 s.
+bcrypt cost 12 on NUC hardware takes ~3 s — expected and acceptable.
+
+See `fastapi_nuc_setup.md` Step 6b for the full stunnel SNI setup procedure.

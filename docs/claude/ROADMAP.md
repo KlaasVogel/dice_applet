@@ -36,18 +36,37 @@ Goal: All data models exist and the API surface is stubbed out.
 
 ---
 
-## Milestone 2 — Frontend Skeleton ⬜
+## Milestone 2 — Frontend Skeleton 🔵 IN PROGRESS
 
 Goal: A navigable single-page app with the correct layout and language switching.
 
-- [ ] `index.html` base layout (header with flags + gear icon, main content area)
-- [ ] i18n dictionary (`nl` / `en`) in `i18n.js`; language toggle wires up to all static text
-- [ ] Teacher login modal (gear icon → password field)
-- [ ] Student landing view (enter classroom code or personal code)
-- [ ] IP-recognition shortcut: "Log in as <name>" when IP is known
-- [ ] Routing between views (student home, activity tile, teacher dashboard) — no framework, plain JS
+- [x] `index.html` base layout (header with flags + gear icon, main content area)
+- [x] i18n dictionary (`nl` / `en`) in `i18n.js`; language toggle wires up to all static text
+- [x] Teacher login modal (gear icon → password field)
+- [x] Student landing view (enter classroom code or personal code)
+- [ ] IP-recognition shortcut: "Log in as <name>" when IP is known — **deferred to M3**
+- [x] Routing between views (student home, activity tile, teacher dashboard) — no framework, plain JS
 
-**Exit criteria:** Can switch language; clicking gear shows login; entering a code routes to student view (mocked data ok).
+**Exit criteria:** Can switch language; clicking gear shows login; entering a code routes to student view (mocked data ok). ✅ Live at https://www.klaasvogel.nl/natuurkunde/dobbelstenen/
+
+---
+
+## Milestone 2.1 — Multi-Teacher Auth & School Model ✅ COMPLETE (2026-06-29)
+
+Goal: Replace the single `.env`-hash teacher with a proper multi-teacher auth system backed
+by the database. Introduce `School` as the top-level unit grouping classrooms and teachers.
+
+**Detailed plan:** `docs/claude/milestone_2_1_plan.md`
+**Changelog:** `docs/changelog/v0.3.0.md`
+
+- [x] DB: `schools`, `teachers`, `teacher_schools` tables; `school_id` added to `classrooms`
+- [x] Alembic migration: `milestone_2_1_auth_and_schools`
+- [x] Auth: `POST /auth/login` (unified admin + teacher), `POST /auth/register`, `GET /auth/me`, `POST /auth/logout`
+- [x] Admin: `GET /admin/requests`, approve/reject endpoints, schools + teachers list
+- [x] Teacher: school-scoped classroom creation; pending-request approval endpoints
+- [x] Frontend: admin/teacher tabs in login modal; registration form view
+
+**Exit criteria:** See `milestone_2_1_plan.md` checklist.
 
 ---
 
@@ -123,7 +142,7 @@ Goal: App runs on the production server at the correct URL.
 
 - [ ] Decide live testing strategy (SFTP sync vs. direct WSL mount vs. Docker)
 - [ ] Production `.env` on server with real MySQL credentials
-- [ ] Nginx reverse-proxy config for `klaasvogel.nl/grundel/natuurkunde/dobbelstenen`
+- [ ] Nginx reverse-proxy config for `https://www.klaasvogel.nl/natuurkunde/dobbelstenen`
 - [ ] `systemd --user` service file for the FastAPI/Uvicorn process
 - [ ] Final QA pass: full student + teacher flow in production environment
 
