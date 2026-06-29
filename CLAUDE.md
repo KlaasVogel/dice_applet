@@ -144,6 +144,14 @@ dice_applet/
 - **Always ask permission before uploading or deleting files**
 - Once permission is granted it applies for the current session only
 - Never upload outside the designated directory
+- **CRITICAL:** Always use `put localfile -o subdir/filename` — plain `put` strips the
+  directory and silently drops the file in the wrong location (e.g. `put frontend/css/style.css`
+  lands at root as `style.css`, not `css/style.css`)
+
+## Version Control Conventions
+- Commit messages must start with the version number: `v0.3.0 description of change`
+- Version bumps: patch (x.x.N) for fixes/docs; minor (x.N.0) for completed milestones
+- Each milestone completion gets its own `docs/changelog/vX.Y.Z.md`
 
 ## Development Notes
 

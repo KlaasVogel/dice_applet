@@ -51,19 +51,20 @@ Goal: A navigable single-page app with the correct layout and language switching
 
 ---
 
-## Milestone 2.1 — Multi-Teacher Auth & School Model ⬜
+## Milestone 2.1 — Multi-Teacher Auth & School Model ✅ COMPLETE (2026-06-29)
 
 Goal: Replace the single `.env`-hash teacher with a proper multi-teacher auth system backed
 by the database. Introduce `School` as the top-level unit grouping classrooms and teachers.
 
 **Detailed plan:** `docs/claude/milestone_2_1_plan.md`
+**Changelog:** `docs/changelog/v0.3.0.md`
 
-- [ ] DB: `schools`, `teachers`, `teacher_schools` tables; `school_id` added to `classrooms`
-- [ ] Alembic migration: `milestone_2_1_auth_and_schools`
-- [ ] Auth: `POST /auth/login` (unified admin + teacher), `POST /auth/register`, `GET /auth/me`, `POST /auth/logout`
-- [ ] Admin: `GET /admin/requests`, approve/reject endpoints, schools + teachers list
-- [ ] Teacher: school-scoped classroom creation; pending-request approval endpoints
-- [ ] Frontend: admin/teacher tabs in login modal; registration form view
+- [x] DB: `schools`, `teachers`, `teacher_schools` tables; `school_id` added to `classrooms`
+- [x] Alembic migration: `milestone_2_1_auth_and_schools`
+- [x] Auth: `POST /auth/login` (unified admin + teacher), `POST /auth/register`, `GET /auth/me`, `POST /auth/logout`
+- [x] Admin: `GET /admin/requests`, approve/reject endpoints, schools + teachers list
+- [x] Teacher: school-scoped classroom creation; pending-request approval endpoints
+- [x] Frontend: admin/teacher tabs in login modal; registration form view
 
 **Exit criteria:** See `milestone_2_1_plan.md` checklist.
 
