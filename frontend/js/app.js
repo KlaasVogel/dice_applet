@@ -43,7 +43,9 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("btn-leave").addEventListener("click", () => showView("landing"));
   document.getElementById("btn-logout").addEventListener("click", submitLogout);
 
-  // Init
+  // Init: restore student session if cookie is still valid, otherwise show landing
   setLang("nl");
-  showView("landing");
+  restoreStudentSession().then((restored) => {
+    if (!restored) showView("landing");
+  });
 });

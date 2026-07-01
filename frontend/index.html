@@ -24,6 +24,7 @@
         <label for="input-classroom-code" data-i18n="label_classroom_code">Klassikale code</label>
         <input id="input-classroom-code" type="text" maxlength="5" autocomplete="off" autocapitalize="characters">
         <button id="btn-join-classroom" class="btn-primary" data-i18n="btn_join">Meedoen</button>
+        <p id="join-classroom-error" class="error hidden"></p>
       </div>
 
       <div class="divider"><span data-i18n="or">of</span></div>
@@ -33,6 +34,7 @@
         <label for="input-personal-code" data-i18n="label_personal_code">Persoonlijke code</label>
         <input id="input-personal-code" type="text" maxlength="12" autocomplete="off">
         <button id="btn-join-personal" class="btn-secondary" data-i18n="btn_continue">Verdergaan</button>
+        <p id="join-personal-error" class="error hidden"></p>
       </div>
     </section>
 
@@ -43,6 +45,9 @@
         <button id="btn-leave" class="btn-secondary" data-i18n="btn_leave">Terug</button>
       </div>
     </section>
+
+    <!-- View: student activity (built in M3 Phase 5) -->
+    <section id="view-student-activity" class="view hidden"></section>
 
     <!-- View: teacher dashboard (stub for M5) -->
     <section id="view-teacher" class="view hidden">

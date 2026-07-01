@@ -31,6 +31,10 @@ const TRANSLATIONS = {
     label_select_school: "Kies een school",
     btn_submit: "Versturen",
     register_success: "Verzoek ingediend! Je ontvangt bericht als je account is goedgekeurd.",
+    error_network: "Verbindingsfout — probeer het opnieuw.",
+    error_join_classroom: "Ongeldige of onbekende code.",
+    error_join_full: "Deze klas is vol.",
+    error_join_personal: "Code niet gevonden.",
   },
   en: {
     page_title: "Dice — Radioactive decay",
@@ -64,6 +68,10 @@ const TRANSLATIONS = {
     label_select_school: "Select a school",
     btn_submit: "Submit",
     register_success: "Request submitted! You will be notified once your account is approved.",
+    error_network: "Connection error — please try again.",
+    error_join_classroom: "Invalid or unknown code.",
+    error_join_full: "This classroom is full.",
+    error_join_personal: "Code not found.",
   },
 };
 

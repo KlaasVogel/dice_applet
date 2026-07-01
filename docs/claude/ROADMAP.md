@@ -80,6 +80,7 @@ Goal: A student can join a classroom, see their identity, and enter measurements
 - [x] `GET /student/me` — returns identity from session cookie
 - [x] Dataset + measurement endpoints (`/student/activities`, `/student/activities/{activity}`,
   PUT measurements, POST request-unlock)
+- [x] Real join/reconnect fetch calls with inline error display; session cookie restored on page load
 - [ ] Animal name + icon displayed after login
 - [ ] Personal code shown with copy/share instructions (NL + EN)
 - [ ] Four activity tiles displayed; clicking one opens activity view

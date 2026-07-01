@@ -8,6 +8,8 @@ class StudentJoinRequest(BaseModel):
 class StudentJoinResponse(BaseModel):
     animal_name: str
     personal_code: str
+    classroom_id: int
+    classroom_name: str
     suggested_name: str | None = None
     suggested_code: str | None = None
 

@@ -34,6 +34,10 @@ async def join(
     if classroom is None or not classroom.is_active:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Classroom not found")
 
+    # Capture before commit expires the ORM object
+    classroom_id = classroom.id
+    classroom_name = classroom.name
+
     client_ip = request.client.host if request.client else None
     existing_students = (await session.scalars(select(Student).where(Student.classroom_id == classroom.id))).all()
 
@@ -61,6 +65,8 @@ async def join(
     return StudentJoinResponse(
         animal_name=animal_name,
         personal_code=personal_code,
+        classroom_id=classroom_id,
+        classroom_name=classroom_name,
         suggested_name=known_student.animal_name if known_student else None,
         suggested_code=known_student.personal_code if known_student else None,
     )
