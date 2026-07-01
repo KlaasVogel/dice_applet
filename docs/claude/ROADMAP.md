@@ -84,12 +84,12 @@ Goal: A student can join a classroom, see their identity, and enter measurements
 - [x] Animal name + emoji displayed after login
 - [x] Personal code shown with copy button and hint text (NL + EN)
 - [x] Four activity tiles with status badges (not started / in progress / locked)
-- [ ] Clicking a tile opens the activity view
-- [ ] Activity view: task description (per activity), data entry table
-  - Rows auto-extend as values are entered; stops when 0 is entered at row ≥ 12
-  - Cells: roll number (auto) + count (manual)
-- [ ] Lock/unlock state: locked shows warning banner + "Request unlock" button
-- [ ] Data saved to backend on each cell change (debounced)
+- [x] Clicking a tile opens the activity view
+- [x] Activity view: task description (per activity), data entry table
+  - Rows auto-extend on non-zero input; stop at 0 entered at row ≥ 12
+  - Role selector shown for activities 3 & 4 (Player 1 / Player 2)
+- [x] Lock/unlock state: locked shows warning banner + "Request unlock" button
+- [x] Data saved to backend on each cell change (debounced 800 ms)
 
 **Exit criteria:** Student can fill in a full solo activity (Activity 1) end-to-end.
 

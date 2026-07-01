@@ -58,8 +58,50 @@
       <button id="btn-leave" class="btn-secondary" data-i18n="leave">Verlaten</button>
     </section>
 
-    <!-- View: student activity (built in M3 Phase 5) -->
-    <section id="view-student-activity" class="view hidden"></section>
+    <!-- View: student activity -->
+    <section id="view-student-activity" class="view hidden">
+      <div class="activity-nav">
+        <button id="btn-back-to-home" class="btn-back" data-i18n="btn_leave">Terug</button>
+        <h2 id="activity-title"></h2>
+      </div>
+
+      <!-- Role selector: shown for activities 3 & 4 before player selects -->
+      <div id="role-selector" class="card hidden">
+        <p class="role-prompt" data-i18n="choose_role">Wat is jouw rol?</p>
+        <div class="role-buttons">
+          <button id="btn-role-1" class="btn-secondary" data-i18n="role_player1">Ik ben Speler 1</button>
+          <button id="btn-role-2" class="btn-secondary" data-i18n="role_player2">Ik ben Speler 2</button>
+        </div>
+      </div>
+
+      <!-- Activity content: shown after role selection (or immediately for acts 1 & 2) -->
+      <div id="activity-content" class="hidden">
+        <div class="card">
+          <p id="activity-description"></p>
+        </div>
+
+        <div id="lock-banner" class="lock-banner hidden">
+          <span data-i18n="locked_notice"></span>
+          <button id="btn-request-unlock" data-i18n="request_unlock"></button>
+        </div>
+
+        <div class="card">
+          <div class="table-scroll">
+            <table id="measurement-table">
+              <thead>
+                <tr>
+                  <th data-i18n="col_roll"></th>
+                  <th data-i18n="col_dice"></th>
+                </tr>
+              </thead>
+              <tbody id="measurement-tbody"></tbody>
+            </table>
+          </div>
+          <button id="btn-add-row" class="btn-add-row" data-i18n="add_row"></button>
+          <p id="save-indicator" class="save-indicator hidden"></p>
+        </div>
+      </div>
+    </section>
 
     <!-- View: teacher dashboard (stub for M5) -->
     <section id="view-teacher" class="view hidden">
