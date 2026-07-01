@@ -38,12 +38,24 @@
       </div>
     </section>
 
-    <!-- View: student home (stub for M3) -->
+    <!-- View: student home -->
     <section id="view-student-home" class="view hidden">
-      <div class="card">
-        <p class="stub-notice" data-i18n="student_home_stub">Welkom! Activiteiten volgen in de volgende fase.</p>
-        <button id="btn-leave" class="btn-secondary" data-i18n="btn_leave">Terug</button>
+      <div id="identity-card" class="card identity-card">
+        <div class="animal-display">
+          <span id="animal-emoji" class="animal-emoji"></span>
+          <span id="animal-name" class="animal-name"></span>
+        </div>
+        <div class="personal-code-row">
+          <span data-i18n="personal_code_label">Jouw code:</span>
+          <code id="personal-code-display"></code>
+          <button id="btn-copy-code" class="btn-copy" data-i18n="copy">Kopieer</button>
+        </div>
+        <p class="personal-code-hint" data-i18n="personal_code_hint"></p>
       </div>
+
+      <div id="activity-tiles" class="tiles-grid"></div>
+
+      <button id="btn-leave" class="btn-secondary" data-i18n="leave">Verlaten</button>
     </section>
 
     <!-- View: student activity (built in M3 Phase 5) -->

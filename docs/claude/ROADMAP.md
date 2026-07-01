@@ -81,9 +81,10 @@ Goal: A student can join a classroom, see their identity, and enter measurements
 - [x] Dataset + measurement endpoints (`/student/activities`, `/student/activities/{activity}`,
   PUT measurements, POST request-unlock)
 - [x] Real join/reconnect fetch calls with inline error display; session cookie restored on page load
-- [ ] Animal name + icon displayed after login
-- [ ] Personal code shown with copy/share instructions (NL + EN)
-- [ ] Four activity tiles displayed; clicking one opens activity view
+- [x] Animal name + emoji displayed after login
+- [x] Personal code shown with copy button and hint text (NL + EN)
+- [x] Four activity tiles with status badges (not started / in progress / locked)
+- [ ] Clicking a tile opens the activity view
 - [ ] Activity view: task description (per activity), data entry table
   - Rows auto-extend as values are entered; stops when 0 is entered at row ≥ 12
   - Cells: roll number (auto) + count (manual)
