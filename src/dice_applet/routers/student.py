@@ -1,6 +1,6 @@
 import random
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -9,18 +9,23 @@ from ..db.models import Classroom, Student
 from ..schemas.student import (
     StudentJoinRequest,
     StudentJoinResponse,
+    StudentMe,
     StudentReconnectRequest,
     StudentReconnectResponse,
 )
 from ..services.animals import ANIMAL_NAMES, generate_personal_code
+from ..services.auth import STUDENT_COOKIE_NAME, create_student_token, require_student
 
 router = APIRouter()
+
+_COOKIE_SETTINGS: dict = dict(httponly=True, secure=True, samesite="none", max_age=24 * 3600)
 
 
 @router.post("/join")
 async def join(
     body: StudentJoinRequest,
     request: Request,
+    response: Response,
     session: AsyncSession = Depends(get_session),
 ) -> StudentJoinResponse:
     classroom = await session.scalar(
@@ -47,6 +52,9 @@ async def join(
     )
     session.add(student)
     await session.commit()
+    await session.refresh(student)
+
+    response.set_cookie(key=STUDENT_COOKIE_NAME, value=create_student_token(student.id), **_COOKIE_SETTINGS)
 
     known_student = next((s for s in existing_students if client_ip and s.ip_address == client_ip), None)
 
@@ -61,12 +69,45 @@ async def join(
 @router.post("/reconnect")
 async def reconnect(
     body: StudentReconnectRequest,
+    response: Response,
     session: AsyncSession = Depends(get_session),
 ) -> StudentReconnectResponse:
     student = await session.scalar(select(Student).where(Student.personal_code == body.personal_code.strip().upper()))
     if student is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Personal code not found")
-    return StudentReconnectResponse(animal_name=student.animal_name, classroom_id=student.classroom_id)
+
+    classroom = await session.get(Classroom, student.classroom_id)
+    if classroom is None:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Classroom not found")
+
+    response.set_cookie(key=STUDENT_COOKIE_NAME, value=create_student_token(student.id), **_COOKIE_SETTINGS)
+
+    return StudentReconnectResponse(
+        animal_name=student.animal_name,
+        personal_code=student.personal_code,
+        classroom_id=student.classroom_id,
+        classroom_name=classroom.name,
+    )
+
+
+@router.get("/me")
+async def me(
+    student_id: int = Depends(require_student),
+    session: AsyncSession = Depends(get_session),
+) -> StudentMe:
+    student = await session.get(Student, student_id)
+    if student is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+    classroom = await session.get(Classroom, student.classroom_id)
+    if classroom is None:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return StudentMe(
+        student_id=student.id,
+        animal_name=student.animal_name,
+        personal_code=student.personal_code,
+        classroom_id=student.classroom_id,
+        classroom_name=classroom.name,
+    )
 
 
 async def _generate_unique_personal_code(session: AsyncSession) -> str:

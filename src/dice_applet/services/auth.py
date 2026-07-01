@@ -8,6 +8,7 @@ from ..config import settings
 
 ALGORITHM = "HS256"
 COOKIE_NAME = "dice_session"
+STUDENT_COOKIE_NAME = "student_session"
 
 
 def create_admin_token() -> str:
@@ -64,6 +65,29 @@ async def require_teacher(dice_session: str | None = Cookie(default=None)) -> in
     if not isinstance(teacher_id, int):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
     return teacher_id
+
+
+def create_student_token(student_id: int) -> str:
+    """Create a signed JWT for a student, valid for 24 hours."""
+    expire = datetime.now(timezone.utc) + timedelta(hours=24)
+    return jwt.encode(
+        {"role": "student", "student_id": student_id, "exp": expire},
+        settings.secret_key,
+        algorithm=ALGORITHM,
+    )
+
+
+async def require_student(student_session: str | None = Cookie(default=None)) -> int:
+    """FastAPI dependency: rejects requests without a valid student session; returns student_id."""
+    if not student_session:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+    payload = _decode_token(student_session)
+    if payload.get("role") != "student":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+    student_id = payload.get("student_id")
+    if not isinstance(student_id, int):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+    return student_id
 
 
 async def require_admin_or_teacher(dice_session: str | None = Cookie(default=None)) -> dict:

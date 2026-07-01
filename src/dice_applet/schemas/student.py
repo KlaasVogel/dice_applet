@@ -18,4 +18,14 @@ class StudentReconnectRequest(BaseModel):
 
 class StudentReconnectResponse(BaseModel):
     animal_name: str
+    personal_code: str
     classroom_id: int
+    classroom_name: str
+
+
+class StudentMe(BaseModel):
+    student_id: int
+    animal_name: str
+    personal_code: str
+    classroom_id: int
+    classroom_name: str

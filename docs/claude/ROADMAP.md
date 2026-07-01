@@ -70,15 +70,19 @@ by the database. Introduce `School` as the top-level unit grouping classrooms an
 
 ---
 
-## Milestone 3 — Student Activity Flow ⬜
+## Milestone 3 — Student Activity Flow 🔵 IN PROGRESS
+
+**Detailed plan:** `docs/claude/milestone_3_plan.md`
 
 Goal: A student can join a classroom, see their identity, and enter measurements.
 
+- [x] Student session cookie (`student_session` JWT, 24 h) — set on join + reconnect
+- [x] `GET /student/me` — returns identity from session cookie
 - [ ] Animal name + icon displayed after login
 - [ ] Personal code shown with copy/share instructions (NL + EN)
 - [ ] Four activity tiles displayed; clicking one opens activity view
 - [ ] Activity view: task description (per activity), data entry table
-  - Start with 12 rows; "+" button appends a row
+  - Rows auto-extend as values are entered; stops when 0 is entered at row ≥ 12
   - Cells: roll number (auto) + count (manual)
 - [ ] Lock/unlock state: locked shows warning banner + "Request unlock" button
 - [ ] Data saved to backend on each cell change (debounced)
