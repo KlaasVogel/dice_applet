@@ -1,0 +1,36 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: dice_applet_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: dice_applet
+      MYSQL_USER: dice_user
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env}
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+    volumes:
+      - dice_applet_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: .
+    container_name: dice_applet_api
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      # Overrides DATABASE_URL from .env so the API talks to the bundled db
+      # service above rather than whatever host .env was written for.
+      DATABASE_URL: mysql+aiomysql://dice_user:${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env}@db:3306/dice_applet
+    ports:
+      - "8000:8000"
+
+volumes:
+  dice_applet_mysql_data:

@@ -166,3 +166,6 @@ Goal: App runs on the production server at the correct URL.
 - [ ] Configurable number of starting dice per classroom (default 100)
 - [ ] Dark mode
 - [ ] Animated dice roll on the student activity view
+- [ ] Smoke-test the new `docker-compose.yml` (API + MySQL) end-to-end — `docker compose up -d --build`,
+  run migrations, verify `/health` and a full teacher/student flow; written but not yet run since no
+  Docker daemon was available when it was added
