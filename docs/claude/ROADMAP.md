@@ -70,18 +70,26 @@ by the database. Introduce `School` as the top-level unit grouping classrooms an
 
 ---
 
-## Milestone 3 — Student Activity Flow ⬜
+## Milestone 3 — Student Activity Flow 🔵 IN PROGRESS
+
+**Detailed plan:** `docs/claude/milestone_3_plan.md`
 
 Goal: A student can join a classroom, see their identity, and enter measurements.
 
-- [ ] Animal name + icon displayed after login
-- [ ] Personal code shown with copy/share instructions (NL + EN)
-- [ ] Four activity tiles displayed; clicking one opens activity view
-- [ ] Activity view: task description (per activity), data entry table
-  - Start with 12 rows; "+" button appends a row
-  - Cells: roll number (auto) + count (manual)
-- [ ] Lock/unlock state: locked shows warning banner + "Request unlock" button
-- [ ] Data saved to backend on each cell change (debounced)
+- [x] Student session cookie (`student_session` JWT, 24 h) — set on join + reconnect
+- [x] `GET /student/me` — returns identity from session cookie
+- [x] Dataset + measurement endpoints (`/student/activities`, `/student/activities/{activity}`,
+  PUT measurements, POST request-unlock)
+- [x] Real join/reconnect fetch calls with inline error display; session cookie restored on page load
+- [x] Animal name + emoji displayed after login
+- [x] Personal code shown with copy button and hint text (NL + EN)
+- [x] Four activity tiles with status badges (not started / in progress / locked)
+- [x] Clicking a tile opens the activity view
+- [x] Activity view: task description (per activity), data entry table
+  - Rows auto-extend on non-zero input; stop at 0 entered at row ≥ 12
+  - Role selector shown for activities 3 & 4 (Player 1 / Player 2)
+- [x] Lock/unlock state: locked shows warning banner + "Request unlock" button
+- [x] Data saved to backend on each cell change (debounced 800 ms)
 
 **Exit criteria:** Student can fill in a full solo activity (Activity 1) end-to-end.
 
@@ -158,3 +166,6 @@ Goal: App runs on the production server at the correct URL.
 - [ ] Configurable number of starting dice per classroom (default 100)
 - [ ] Dark mode
 - [ ] Animated dice roll on the student activity view
+- [ ] Smoke-test the new `docker-compose.yml` (API + MySQL) end-to-end — `docker compose up -d --build`,
+  run migrations, verify `/health` and a full teacher/student flow; written but not yet run since no
+  Docker daemon was available when it was added

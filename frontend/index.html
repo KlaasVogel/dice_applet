@@ -24,6 +24,7 @@
         <label for="input-classroom-code" data-i18n="label_classroom_code">Klassikale code</label>
         <input id="input-classroom-code" type="text" maxlength="5" autocomplete="off" autocapitalize="characters">
         <button id="btn-join-classroom" class="btn-primary" data-i18n="btn_join">Meedoen</button>
+        <p id="join-classroom-error" class="error hidden"></p>
       </div>
 
       <div class="divider"><span data-i18n="or">of</span></div>
@@ -33,14 +34,72 @@
         <label for="input-personal-code" data-i18n="label_personal_code">Persoonlijke code</label>
         <input id="input-personal-code" type="text" maxlength="12" autocomplete="off">
         <button id="btn-join-personal" class="btn-secondary" data-i18n="btn_continue">Verdergaan</button>
+        <p id="join-personal-error" class="error hidden"></p>
       </div>
     </section>
 
-    <!-- View: student home (stub for M3) -->
+    <!-- View: student home -->
     <section id="view-student-home" class="view hidden">
-      <div class="card">
-        <p class="stub-notice" data-i18n="student_home_stub">Welkom! Activiteiten volgen in de volgende fase.</p>
-        <button id="btn-leave" class="btn-secondary" data-i18n="btn_leave">Terug</button>
+      <div id="identity-card" class="card identity-card">
+        <div class="animal-display">
+          <span id="animal-emoji" class="animal-emoji"></span>
+          <span id="animal-name" class="animal-name"></span>
+        </div>
+        <div class="personal-code-row">
+          <span data-i18n="personal_code_label">Jouw code:</span>
+          <code id="personal-code-display"></code>
+          <button id="btn-copy-code" class="btn-copy" data-i18n="copy">Kopieer</button>
+        </div>
+        <p class="personal-code-hint" data-i18n="personal_code_hint"></p>
+      </div>
+
+      <div id="activity-tiles" class="tiles-grid"></div>
+
+      <button id="btn-leave" class="btn-secondary" data-i18n="leave">Verlaten</button>
+    </section>
+
+    <!-- View: student activity -->
+    <section id="view-student-activity" class="view hidden">
+      <div class="activity-nav">
+        <button id="btn-back-to-home" class="btn-back" data-i18n="btn_leave">Terug</button>
+        <h2 id="activity-title"></h2>
+      </div>
+
+      <!-- Role selector: shown for activities 3 & 4 before player selects -->
+      <div id="role-selector" class="card hidden">
+        <p class="role-prompt" data-i18n="choose_role">Wat is jouw rol?</p>
+        <div class="role-buttons">
+          <button id="btn-role-1" class="btn-secondary" data-i18n="role_player1">Ik ben Speler 1</button>
+          <button id="btn-role-2" class="btn-secondary" data-i18n="role_player2">Ik ben Speler 2</button>
+        </div>
+      </div>
+
+      <!-- Activity content: shown after role selection (or immediately for acts 1 & 2) -->
+      <div id="activity-content" class="hidden">
+        <div class="card">
+          <p id="activity-description"></p>
+        </div>
+
+        <div id="lock-banner" class="lock-banner hidden">
+          <span data-i18n="locked_notice"></span>
+          <button id="btn-request-unlock" data-i18n="request_unlock"></button>
+        </div>
+
+        <div class="card">
+          <div class="table-scroll">
+            <table id="measurement-table">
+              <thead>
+                <tr>
+                  <th data-i18n="col_roll"></th>
+                  <th data-i18n="col_dice"></th>
+                </tr>
+              </thead>
+              <tbody id="measurement-tbody"></tbody>
+            </table>
+          </div>
+          <button id="btn-add-row" class="btn-add-row" data-i18n="add_row"></button>
+          <p id="save-indicator" class="save-indicator hidden"></p>
+        </div>
       </div>
     </section>
 

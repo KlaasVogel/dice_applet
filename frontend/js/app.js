@@ -39,11 +39,28 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.key === "Enter") joinWithPersonalCode();
   });
 
-  // Navigation
+  // Student home navigation
   document.getElementById("btn-leave").addEventListener("click", () => showView("landing"));
+
+  // Activity view
+  document.getElementById("btn-back-to-home").addEventListener("click", () => {
+    _cancelPendingSave();
+    renderStudentHome();
+  });
+  document.getElementById("btn-role-1").addEventListener("click", () => _selectRole(1));
+  document.getElementById("btn-role-2").addEventListener("click", () => _selectRole(2));
+  document.getElementById("btn-request-unlock").addEventListener("click", _requestUnlock);
+  document.getElementById("btn-add-row").addEventListener("click", () => {
+    const tbody = document.getElementById("measurement-tbody");
+    _appendRow(tbody.querySelectorAll("tr").length + 1, null, activityState.isLocked);
+    _scheduleSave();
+  });
+
   document.getElementById("btn-logout").addEventListener("click", submitLogout);
 
-  // Init
+  // Init: restore student session if cookie is still valid, otherwise show landing
   setLang("nl");
-  showView("landing");
+  restoreStudentSession().then((restored) => {
+    if (!restored) showView("landing");
+  });
 });
