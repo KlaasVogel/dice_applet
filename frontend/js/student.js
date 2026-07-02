@@ -204,11 +204,18 @@ const activityState = {
   player: null,
   isLocked: false,
   saveTimer: null,
+  graph: null,
 };
 
 const MIN_ROWS = 12;
+const GRAPH_COLOR_P1 = "#2563eb";
+const GRAPH_COLOR_P2 = "#f59e0b";
 
 async function openActivity(activity) {
+  if (activityState.graph) {
+    activityState.graph.destroy();
+    activityState.graph = null;
+  }
   activityState.activity = activity;
   activityState.player = null;
   _cancelPendingSave();
@@ -224,8 +231,11 @@ async function openActivity(activity) {
   } else {
     activityState.player = 1;
     document.getElementById("role-selector").classList.add("hidden");
-    await _loadAndRenderActivity();
+    // The graph needs a visible (laid-out) container to size its canvas, so show the
+    // view shell before loading/rendering content — same order the paired-activity
+    // branch above already uses (role selector shows immediately, content fills in later).
     showView("student-activity");
+    await _loadAndRenderActivity();
   }
 }
 
@@ -265,13 +275,57 @@ async function _loadAndRenderActivity() {
     // Add-row button: hide when locked
     document.getElementById("btn-add-row").classList.toggle("hidden", data.is_locked);
 
+    // Reveal the container before rendering the table/graph — the graph sizes its
+    // canvas from the container's layout width, which reads 0 while hidden.
+    document.getElementById("activity-content").classList.remove("hidden");
+
     // Table
     const myMeasurements = data.measurements.filter((m) => m.player === player);
     _renderTable(myMeasurements, data.is_locked);
-
-    document.getElementById("activity-content").classList.remove("hidden");
+    _renderGraph();
   } catch {
     // content stays hidden on error
+  }
+}
+
+// ── Decay graph ───────────────────────────────────────────────────────────────
+
+function _axisLabels() {
+  return { x: TRANSLATIONS[currentLang].graph_axis_x, y: TRANSLATIONS[currentLang].graph_axis_y };
+}
+
+function _liveGraphData() {
+  const values = [];
+  document.getElementById("measurement-tbody").querySelectorAll("tr").forEach((tr) => {
+    const val = tr.querySelector(".dice-input")?.value;
+    if (val !== "" && val !== undefined) values.push(parseInt(val, 10));
+  });
+  return [100, ...values];
+}
+
+function _graphLines() {
+  const { activity } = activityState;
+  if (activity <= 2) {
+    return [{ data: _liveGraphData(), color: GRAPH_COLOR_P1, key: "p1" }];
+  }
+  const mock = GRAPH_MOCK_DATA[activity];
+  return [
+    { data: mock.p1, color: GRAPH_COLOR_P1, key: "p1" },
+    { data: mock.p2, color: GRAPH_COLOR_P2, key: "p2" },
+  ];
+}
+
+function _renderGraph() {
+  document.getElementById("graph-legend").classList.toggle("hidden", activityState.activity <= 2);
+  const lines = _graphLines();
+  if (activityState.graph) {
+    activityState.graph.update(lines, { axisLabels: _axisLabels() });
+  } else {
+    activityState.graph = createDecayGraph(document.getElementById("activity-graph"), {
+      lines,
+      axisLabels: _axisLabels(),
+      totalDice: 100,
+    });
   }
 }
 
@@ -304,6 +358,9 @@ function _onCellChange(input, rollNumber) {
     if (val !== null && (val > 0 || totalRows < MIN_ROWS)) {
       _appendRow(totalRows + 1, null, activityState.isLocked);
     }
+  }
+  if (activityState.activity <= 2 && activityState.graph) {
+    activityState.graph.update(_graphLines(), { axisLabels: _axisLabels() });
   }
   _scheduleSave();
 }

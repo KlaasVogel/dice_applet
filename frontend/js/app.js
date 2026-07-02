@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   // Language toggle
-  document.getElementById("btn-nl").addEventListener("click", () => setLang("nl"));
-  document.getElementById("btn-en").addEventListener("click", () => setLang("en"));
+  document.getElementById("btn-nl").addEventListener("click", () => { setLang("nl"); _refreshGraphLang(); });
+  document.getElementById("btn-en").addEventListener("click", () => { setLang("en"); _refreshGraphLang(); });
 
   // Teacher modal
   document.getElementById("btn-teacher").addEventListener("click", openTeacherModal);
@@ -45,6 +45,10 @@ document.addEventListener("DOMContentLoaded", () => {
   // Activity view
   document.getElementById("btn-back-to-home").addEventListener("click", () => {
     _cancelPendingSave();
+    if (activityState.graph) {
+      activityState.graph.destroy();
+      activityState.graph = null;
+    }
     renderStudentHome();
   });
   document.getElementById("btn-role-1").addEventListener("click", () => _selectRole(1));
@@ -53,10 +57,21 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("btn-add-row").addEventListener("click", () => {
     const tbody = document.getElementById("measurement-tbody");
     _appendRow(tbody.querySelectorAll("tr").length + 1, null, activityState.isLocked);
+    if (activityState.activity <= 2 && activityState.graph) {
+      activityState.graph.update(_graphLines(), { axisLabels: _axisLabels() });
+    }
     _scheduleSave();
   });
 
   document.getElementById("btn-logout").addEventListener("click", submitLogout);
+
+  // Resize the graph canvas on viewport changes, but only while its view is visible —
+  // resizing while hidden would read a container width of 0.
+  window.addEventListener("resize", () => {
+    if (activityState.graph && !document.getElementById("view-student-activity").classList.contains("hidden")) {
+      activityState.graph.resize();
+    }
+  });
 
   // Init: restore student session if cookie is still valid, otherwise show landing
   setLang("nl");
@@ -64,3 +79,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!restored) showView("landing");
   });
 });
+
+function _refreshGraphLang() {
+  if (activityState.graph && !document.getElementById("view-student-activity").classList.contains("hidden")) {
+    activityState.graph.update(_graphLines(), { axisLabels: _axisLabels() });
+  }
+}

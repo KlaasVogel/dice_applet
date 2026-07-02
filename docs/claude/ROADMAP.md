@@ -95,20 +95,47 @@ Goal: A student can join a classroom, see their identity, and enter measurements
 
 ---
 
-## Milestone 4 — Graphs (p5.js) ⬜
+## Milestone 4 — Graphs (p5.js) ✅ COMPLETE (2026-07-02)
 
 Goal: Interactive decay graphs for all four activities.
 
-- [ ] p5.js sketch base: axis labels (NL/EN), grid, margins
-- [ ] Single-line graph: dots + smooth curve (Activities 1 & 2)
-- [ ] Dual-line graph: two datasets, two colours (Activities 3 & 4)
-- [ ] Hover interaction:
+- [x] p5.js sketch base: axis labels (NL/EN), grid, margins
+- [x] Single-line graph: dots + smooth curve (Activities 1 & 2)
+- [x] Dual-line graph: two datasets, two colours (Activities 3 & 4)
+- [x] Hover interaction:
   - Thin red vertical + horizontal crosshair lines
   - Coordinate tooltip near crossing
   - Second crosshair for dual-line graph
-- [ ] Graph updates live as table data changes
+- [x] Graph updates live as table data changes — Activities 1 & 2 only (single-student,
+  reads the on-screen table). Activities 3 & 4 use mock data until Milestone 4.1 gives
+  a real source for both players' data.
 
-**Exit criteria:** Graph renders correctly from mock data for all four activity types with working hover.
+**Exit criteria:** Graph renders correctly from mock data for all four activity types with working hover. ✅ Verified in a real browser (Playwright); see `docs/changelog/v0.4.0.md`.
+
+**Detailed plan:** `docs/claude/milestone_4_plan.md`
+
+---
+
+## Milestone 4.1 — Shared Activity Workspace (Activities 3 & 4) ⬜
+
+Goal: Replace the current per-student-isolated dataset for paired activities with a
+real shared workspace, so both students see and can edit all the paired data — and so
+the M4 dual-line graph can eventually show real data instead of mock data for
+Activities 3 & 4.
+
+- [ ] One student creates a shared workspace for Activity 3 or 4; partner joins using
+  the first student's personal code, linking both students to the same dataset
+- [ ] Both students can toggle between "Player 1" / "Player 2" at any time; toggling
+  changes displayed instructions and highlights the column they're currently recording
+  — both continue to see all data (both columns) regardless of current role
+- [ ] Backend: replace the `UniqueConstraint(student_id, activity)` model for activities
+  3 & 4 with a sharing mechanism (join table or workspace concept); new "join by
+  personal code" endpoint; authorization updated so both linked students can read/write
+  the same StudentDataset row
+- [ ] Layout changes to the activity view to accommodate both columns + role toggle
+
+**Exit criteria:** Two students in different browser tabs can both see and edit the same
+Activity 3 (or 4) dataset after one joins the other's workspace via personal code.
 
 ---
 
@@ -169,3 +196,11 @@ Goal: App runs on the production server at the correct URL.
 - [ ] Smoke-test the new `docker-compose.yml` (API + MySQL) end-to-end — `docker compose up -d --build`,
   run migrations, verify `/health` and a full teacher/student flow; written but not yet run since no
   Docker daemon was available when it was added
+- [ ] Fix `#activity-title` not re-translating on language toggle — it's set via
+  `textContent` in `student.js`'s `openActivity()`/`_loadAndRenderActivity()` rather
+  than a `data-i18n` attribute, so switching NL/EN while an activity view is open
+  leaves the title stale until the next navigation. Found during M4 verification,
+  pre-existing since M3, out of scope for M4.
+- [ ] Verify graph touch/drag crosshair behavior and canvas resize/hide-then-show
+  cycle on a real or touch-emulated device — M4's automated verification only
+  exercised mouse events on a fixed viewport (see `docs/claude/milestone_4_plan.md`)
